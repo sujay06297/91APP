@@ -1,0 +1,193 @@
+﻿@using _91APP_Test.Controllers
+@model List<HomeController.OrderInfo>
+
+
+@{
+    ViewBag.Title = "OrderList";
+}
+
+<style>
+    #Title {
+        color: #FFFFFF
+    }
+
+
+    #OrderList_div {
+        background-color: #33CCFF;
+        border: 2px solid #46A3FF;
+        width: 55%;
+        margin-top: 10%;
+    }
+
+    table {
+        border: 2px solid #fff;
+        font-family: 微軟正黑體;
+        font-size: 16px;
+        width: 200px;
+        border: 2px solid #000;
+        text-align: center;
+        border-collapse: collapse;
+    }
+
+    th {
+        background-color: #33CCFF;
+        padding: 10px;
+        border: 2px solid #fff;
+        color: #fff;
+    }
+
+    td {
+        border: 2px solid #fff;
+        padding: 5px;
+        /*background-color: #C4E1FF;*/
+    }
+
+    #OrderTable_Tbody tr:nth-child(even) {
+        background-color: #ECF5FF;
+    }
+
+    #OrderTable_Tbody tr:nth-child(odd) {
+        background-color: #C4E1FF;
+    }
+
+    #OderList_Confirm_btn {
+        background-color: #2894FF;
+        color: #FFFFFF;
+        border-radius: 5px;
+        border: 1px solid #004B97;
+        margin-top: 2%;
+        margin-bottom: 4%;
+        margin-left: 7%;
+        width: 18%;
+        height: 35px;
+    }
+
+    .OrderItem_span {
+        text-decoration: underline;
+        color: #2828FF;
+        cursor: pointer;
+    }
+</style>
+
+<head>
+
+
+
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+
+    @*<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+        integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+        crossorigin="anonymous"></script>*@
+
+
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+
+
+</head>
+<div>
+    <div id="OrderList_div">
+        <h3 id="Title">OrderList</h3>
+        <div id="OrderTable_div" style="margin:0px auto;">
+            <table id="OrderTable" align="center">
+                <thead>
+                    <tr>
+                        <th nowrap="nowrap"></th>
+                        <th nowrap="nowrap">Order Id</th>
+                        <th nowrap="nowrap">Order Item</th>
+                        <th nowrap="nowrap">Price</th>
+                        <th nowrap="nowrap">Cost</th>
+                        <th nowrap="nowrap">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="OrderTable_Tbody">
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td nowrap="nowrap"><input type="checkbox" class="OrderId_checkbox" value="@item.OrderId" /></td>
+                            <td nowrap="nowrap">@item.OrderId</td>
+                            <td nowrap="nowrap"><span class="OrderItem_span">@item.OrderItem</span></td>
+                            <td nowrap="nowrap">@item.Price</td>
+                            <td nowrap="nowrap">@item.Cost</td>
+                            <td nowrap="nowrap" class="Status_td">@item.Status</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+            <input type="button" id="OderList_Confirm_btn" name="name" value="Confirm" />
+
+        </div>
+
+    </div>
+</div>
+
+
+<div id="OrderDetail_Dialog" style="display:none" title="111">
+    123
+</div>
+
+<script>
+
+$( document ).ready(function() {
+    $("#OrderDetail_Dialog").dialog({
+        autoOpen: false,
+        height: 500,
+        width: 500,
+        minWidth: 300,
+        minHeight: 300,
+        maxWidth: 800,
+        maxHeight: 600,
+        modal: true,
+    });
+
+
+
+        $('.OrderItem_span').on('click', function () {
+            $("#OrderDetail_Dialog").dialog("open");
+        });
+});
+
+
+
+
+
+
+
+
+
+
+    $('#OderList_Confirm_btn').on('click', function () {
+
+        if (confirm('確定送出?')) {
+            var checkboxlist = [];
+            $(".OrderId_checkbox:checked").each(function () {
+                checkboxlist.push($(this).val());
+            });
+
+            $.ajax({
+                url: "@Url.Action("UpdateOrderStatus","Home")",
+                async: true,
+                cache: false,
+                type: 'POST',
+                data: {
+                    Data : JSON.stringify(checkboxlist)
+                },
+                success: function (result) {
+                    alert(result);
+                    $('.OrderId_checkbox:checked').parents('tr').find('.Status_td').text('To be shipped');
+                }
+             });
+
+
+        }
+
+
+
+
+
+    });
+
+
+
+</script>
